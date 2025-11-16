@@ -24,42 +24,40 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: screens[currentIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          unselectedItemColor: Colors.grey,
-          elevation: 1,
-          selectedItemColor: AppColors.primaryColor,
-          currentIndex: currentIndex,
-          onTap: (value) {
-            setState(() {
-              currentIndex = value;
-            });
-          },
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.home,
-                  size: 30.sp,
-                ),
-                label: "Home"),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.shopping_cart,
-                  size: 30.sp,
-                ),
-                label: "Cart"),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.person_3_outlined,
-                  size: 30.sp,
-                ),
-                label: "Account"),
-          ],
-        ),
+    return Scaffold(
+      body: screens[currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        unselectedItemColor: Colors.grey,
+        elevation: 1,
+        selectedItemColor: AppColors.primaryColor,
+        currentIndex: currentIndex,
+        onTap: (value) {
+          setState(() {
+            currentIndex = value;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
+                size: 30.sp,
+              ),
+              label: "Home"),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.shopping_cart,
+                size: 30.sp,
+              ),
+              label: "Cart"),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.person_3_outlined,
+                size: 30.sp,
+              ),
+              label: "Account"),
+        ],
       ),
     );
   }

@@ -21,7 +21,7 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const HeightSpace(28),
+          const HeightSpace(50),
           SizedBox(
             width: 335.w,
             child: Text(
@@ -75,7 +75,7 @@ class HomeScreen extends StatelessWidget {
                 crossAxisCount: 2,
                 mainAxisSpacing: 8.sp,
                 crossAxisSpacing: 16.sp,
-                childAspectRatio: 0.8,
+                childAspectRatio: 0.75,
               ),
               children: [
                 ProductItemWidget(
