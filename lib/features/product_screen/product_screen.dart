@@ -1,11 +1,19 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_app/core/styling/app_styles.dart';
+import 'package:ecommerce_app/core/utils/animated_snack_dialog.dart';
 import 'package:ecommerce_app/core/widgets/primay_button_widget.dart';
 import 'package:ecommerce_app/core/widgets/spacing_widgets.dart';
+import 'package:ecommerce_app/features/home_screen/models/ProductsModel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../cart/cubit/cart_cubit.dart';
+
 class ProductScreen extends StatelessWidget {
-  const ProductScreen({super.key});
+  ProductScreen({super.key, required this.products});
+  ProductsModel products;
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +35,14 @@ class ProductScreen extends StatelessWidget {
                   Container(
                     width: 341.w,
                     height: 341.h,
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
+                    child:
+                        Hero(
+                          tag: "product${products.title}",
+                            child: CachedNetworkImage(imageUrl: "${products.image ?? ""}")),
                   ),
                   const HeightSpace(12),
                   Text(
-                    "T Shirt ",
+                    "${products.title}",
                     style: AppStyles.black16w500Style.copyWith(fontSize: 24.sp),
                   ),
                   const HeightSpace(8),
@@ -46,22 +54,26 @@ class ProductScreen extends StatelessWidget {
                         size: 18.sp,
                       ),
                       const WidthSpace(2),
-                      Text(
-                        "4.5/5",
-                        style: AppStyles.black15BoldStyle
-                            .copyWith(decoration: TextDecoration.underline),
-                      ),
+                      products.rating != null
+                          ? Text(
+                              "${products.rating!.rate}/5",
+                              style: AppStyles.black15BoldStyle.copyWith(
+                                  decoration: TextDecoration.underline),
+                            )
+                          : SizedBox.shrink(),
                       const WidthSpace(2),
-                      Text(
-                        "(45 Reviews)",
-                        style: AppStyles.grey12MediumStyle.copyWith(
-                            fontWeight: FontWeight.bold, fontSize: 15.sp),
-                      ),
+                      products.rating != null
+                          ? Text(
+                              "(${products.rating!.count} Reviews)",
+                              style: AppStyles.grey12MediumStyle.copyWith(
+                                  fontWeight: FontWeight.bold, fontSize: 15.sp),
+                            )
+                          : SizedBox.shrink(),
                     ],
                   ),
                   const HeightSpace(8),
                   Text(
-                    "Blue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of Them Blue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of Them Blue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of Them Blue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of Them Blue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of Them Blue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of Them Blue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of ThemBlue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of Them Blue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of ThemBlue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of ThemBlue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of Them Blue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of ThemBlue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of ThemBlue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of ThemBlue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of ThemBlue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of ThemBlue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of ThemBlue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of ThemBlue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of ThemBlue T Shirt . Good for All Men and Suits for All of Them.Blue T Shirt . Good for All Men and Suits for All of Them",
+                    "${products.description ?? ""}",
                     style: AppStyles.grey12MediumStyle.copyWith(
                         fontSize: 16.sp, fontWeight: FontWeight.normal),
                   ),
@@ -93,22 +105,45 @@ class ProductScreen extends StatelessWidget {
                           ),
                           HeightSpace(4),
                           Text(
-                            "1120 \$",
+                            "${products.price} \$",
                             style: AppStyles.black16w500Style.copyWith(
                                 fontSize: 24.sp, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
                       const WidthSpace(16),
-                      PrimayButtonWidget(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        buttonText: "Add To Cart",
-                        icon: Icon(
-                          Icons.shopping_cart,
-                          color: Colors.white,
-                          size: 16.sp,
-                        ),
-                        onPress: () {},
+                      BlocConsumer<CartCubit, CartState>(
+                        listener: (context, state) {
+                          if (state is CartAddToCartSuccess) {
+                            showAnimatedSnackDialog(context,
+                                message: "Product added to cart successfully",
+                                type: AnimatedSnackBarType.success);
+                          }
+                        },
+                        builder: (context, state) {
+                          if (state is CartAddToCart) {
+                            return PrimayButtonWidget(
+                              width: MediaQuery.of(context).size.width * 0.5,
+                              isLoading: true,
+                              buttonText: "Add To Cart",
+                              onPress: () {},
+                            );
+                          }
+                          return PrimayButtonWidget(
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            buttonText: "Add To Cart",
+                            icon: Icon(
+                              Icons.shopping_cart,
+                              color: Colors.white,
+                              size: 16.sp,
+                            ),
+                            onPress: () {
+                              context
+                                  .read<CartCubit>()
+                                  .addToCart("1", products);
+                            },
+                          );
+                        },
                       ),
                     ],
                   ),

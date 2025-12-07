@@ -4,8 +4,12 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../models/add_to_cart_model.dart';
+import '../models/cart_model.dart';
+
 class CartItemWidget extends StatelessWidget {
-  const CartItemWidget({super.key});
+  final Product product;
+  const CartItemWidget({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +41,7 @@ class CartItemWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "T Shirt",
+                       " ${product.productId}",
                         style: AppStyles.black15BoldStyle,
                       ),
                       Spacer(),
